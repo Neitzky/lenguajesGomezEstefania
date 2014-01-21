@@ -18,7 +18,7 @@ public class LenguajesGomezEstefania {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        System.out.println("Bienvenidos al curso de Lenguajes");
+        System.out.println("Bienvenidos al curso de Lenguajes :D");
     }
     
 }
