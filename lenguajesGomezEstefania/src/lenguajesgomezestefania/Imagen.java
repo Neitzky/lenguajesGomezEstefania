@@ -20,7 +20,11 @@ public class Imagen {
     }
 
     public void setAlto(int alto) {
+        if(alto<0)alto=-alto;
+      
         this.alto = alto;
+        
+        
     }
 
     public int getAncho() {
@@ -28,6 +32,9 @@ public class Imagen {
     }
 
     public void setAncho(int ancho) {
+        if(ancho<0)ancho=-ancho;
         this.ancho = ancho;
     }
 }
+
+   
