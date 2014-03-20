@@ -1,0 +1,17 @@
+ClassNotFoundException
+Lanza la excepción cuando la clase no ha sido cargada por que la definición de la clase no ha sido encontrada.
+
+IOException
+Lanza la excepción cuando ocurre un fallo o es interrumpida la operación en curso. 2 comunes subtipos de excepción de IOException son EOFException y FileNotFoundException.
+
+FileNotFoundException
+Lanza la excepción cuando al abrir un archivo no es encontrado.
+
+SQLException
+Lanza la excepción cuando ocurre un error en la Base de Datos.
+
+InterruptedException
+Lanza la excepción cuando el Hilo es interrumpido.
+
+NoSuchMethodException
+Lanza la excepción cuando se llama a un método y este no es encontrado.
