@@ -1,0 +1,82 @@
+Controlando los Threads (Ciclo de vida)
+
+Que es el ciclo de vida
+El ciclo de vida de un Thread representa los estados por los cuales puede pasar un Thread desde que nace hsta que muere. 
+Durante el ciclo de vida de un Thread, este se puede encontrar en diferentes estados.
+
+Nuevo Thread
+
+La siguiente sentencia crea un nuevo thread pero no lo arranca, lo deja en el estado de "Nuevo Thread":
+
+Thread MiThread = new MiClaseThread();
+Cuando un thread está en este estado, es simplemente un objeto Thread vacío. El sistema no ha destinado ningún recurso para él. Desde este estado solamente puede arrancarse llamando al método start(), o detenerse definitivamente, llamando al método stop(); la llamada a cualquier otro método carece de sentido y lo único que provocará será la generación de una excepción de tipo IllegalThreadStateException.
+
+Ejecutable
+
+Ahora veamos las dos línea de código que se presentan a continuación:
+
+Thread MiThread = new MiClaseThread();
+MiThread.start();
+La llamada al método start() creará los recursos del sistema necesarios para que el thread puede ejecutarse, lo incorpora a la lista de procesos disponibles para ejecución del sistema y llama al método run() del thread. En este momento nos encontramos en el estado "Ejecutable" del diagrama. Y este estado es Ejecutable y no En Ejecución, porque cuando el thread está aquí no esta corriendo. Muchos ordenadores tienen solamente un procesador lo que hace imposible que todos los threads estén corriendo al mismo tiempo. Java implementa un tipo de scheduling o lista de procesos, que permite que el procesador sea compartido entre todos los procesos o threads que se encuentran en la lista. Sin embargo, para nuestros propósitos, y en la mayoría de los casos, se puede considerar que este estado es realmente un estado "En Ejecución", porque la impresión que produce ante nosotros es que todos los procesos se ejecutan al mismo tiempo.
+
+Cuando el thread se encuentra en este estado, todas las instrucciones de código que se encuentren dentro del bloque declarado para el método run(), se ejecutarán secuencialmente.
+
+Parado
+
+El thread entra en estado "Parado" cuando alguien llama al método suspend(), cuando se llama al método sleep(), cuando el thread está bloqueado en un proceso de entrada/salida o cuando el thread utiliza su método wait() para esperar a que se cumpla una determinada condición. Cuando ocurra cualquiera de las cuatro cosas anteriores, el thread estará Parado.
+
+Por ejemplo, en el trozo de código siguiente:
+
+Thread MiThread = new MiClaseThread();
+MiThread.start();
+try {
+    MiThread.sleep( 10000 );
+} catch( InterruptedException e ) {
+    ;
+    }
+la línea de código que llama al método sleep():
+
+    MiThread.sleep( 10000 );
+hace que el thread se duerma durante 10 segundos. Durante ese tiempo, incluso aunque el procesador estuviese totalmente libre, MiThread no correría. Después de esos 10 segundos. MiThread volvería a estar en estado "Ejecutable" y ahora sí que el procesador podría hacerle caso cuando se encuentre disponible.
+
+Para cada una de los cuatro modos de entrada en estado Parado, hay una forma específica de volver a estado Ejecutable. Cada forma de recuperar ese estado es exclusiva; por ejemplo, si el thread ha sido puesto a dormir, una vez transcurridos los milisegundos que se especifiquen, él solo se despierta y vuelve a estar en estado Ejecutable. Llamar al método resume() mientras esté el thread durmiendo no serviría para nada.
+
+Los métodos de recuperación del estado Ejecutable, en función de la forma de llegar al estado Parado del thread, son los siguientes:
+
+Si un thread está dormido, pasado el lapso de tiempo
+Si un thread está suspendido, luego de una llamada al método resume()
+Si un thread está bloqueado en una entrada/salida, una vez que el comando E/S concluya su ejecución
+Si un thread está esperando por una condición, cada vez que la variable que controla esa condición varíe debe llamarse a notify() o notifyAll()
+Muerto
+
+Un thread se puede morir de dos formas: por causas naturales o porque lo maten (con stop()). Un thread muere normalmente cuando concluye de forma habitual su método run(). Por ejemplo, en el siguiente trozo de código, el bucle while es un bucle finito -realiza la iteración 20 veces y termina-:
+
+public void run() {
+    int i=0;
+    while( i < 20 )
+        {
+        i++;
+        System.out.println( "i = "+i );
+        }
+    }
+Un thread que contenga a este método run(), morirá naturalmente después de que se complete el bucle y run() concluya.
+
+También se puede matar en cualquier momento un thread, invocando a su método stop(). En el trozo de código siguiente:
+
+Thread MiThread = new MiClaseThread();
+MiThread.start();
+try {
+    MiThread.sleep( 10000 );
+} catch( InterruptedException e ) {
+    ;
+    }
+MiThread.stop();
+se crea y arranca el thread MiThread, lo dormimos durante 10 segundos y en el momento de despertarse, la llamada a su método stop(), lo mata.
+
+El método stop() envía un objeto ThreadDeath al thread que quiere detener. Así, cuando un thread es parado de este modo, muere asíncronamente. El thread morirá en el momento en que reciba la excepción ThreadDeath.
+
+Los applets utilizarán el método stop() para matar a todos sus threads cuando el navegador con soporte Java en el que se están ejecutando le indica al applet que se detengan, por ejemplo, cuando se minimiza la ventana del navegador o cuando se cambia de página.
+
+El método isAlive()
+
+La interface de programación de la clase Thread incluye el método isAlive(), que devuelve true si el thread ha sido arrancado (con start()) y no ha sido detenido (con stop()). Por ello, si el método isAlive() devuelve false, sabemos que estamos ante un "Nuevo Thread" o ante un thread "Muerto". Si nos devuelve true, sabemos que el thread se encuentra en estado "Ejecutable" o "Parado". No se puede diferenciar entre "Nuevo Thread" y "Muerto", ni entre un thread "Ejecutable" o "Parado".
